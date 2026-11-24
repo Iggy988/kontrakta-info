@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="sr-Latn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kontrakta Desktop – program za advokate</title>
+<meta name="description" content="Kontrakta Desktop – Windows program za advokate u BiH: AI izrada tužbi, žalbi, ugovora i podnesaka uz članove iz vaše baze zakona, predmeti, rokovi, ročišta, troškovnici i fakture na jednom mjestu.">
+<meta property="og:title" content="Kontrakta Desktop – program za advokate">
+<meta property="og:description" content="Pravni akti za nekoliko minuta, kancelarija pod kontrolom. Windows program za advokate i advokatske kancelarije u BiH.">
+<meta property="og:image" content="https://iggy988.github.io/kontrakta-info/assets/pocetna.png">
+<meta name="theme-color" content="#111318">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary:#111318; --primary-hover:#1F232B; --surface:#1B1E24; --surface-2:#242830; --surface-border:#2A2E37;
+    --gold:#C9A227; --gold-hover:#B8921C; --gold-bright:#F7BE2B; --on-gold:#1A1407; --gold-text:#8A6A06; --gold-bg:#FBF3D6;
+    --on-dark:#F3F4F6; --on-dark-2:#A1A6B0;
+    --bg:#F4F6FA; --card:#FFFFFF; --border:#E4E7EC; --border-subtle:#EEF0F4;
+    --text:#16181D; --text-2:#5F6672; --text-3:#9CA3AF;
+    --success:#16A34A; --success-bg:#DCFCE7; --warning:#D97706; --warning-bg:#FEF3C7;
+    --blue:#2563EB; --blue-bg:#E6EEFD; --violet:#7C3AED; --violet-bg:#EFE7FD;
+    --radius:14px;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; font:16px/1.6 Inter, "Segoe UI", system-ui, sans-serif; color:var(--text); background:var(--bg); -webkit-font-smoothing:antialiased; }
+  img { max-width:100%; display:block; }
+  a { color:inherit; }
+  .wrap { max-width:1180px; margin:0 auto; padding:0 20px; }
+
+  /* Nav */
+  .nav { position:sticky; top:0; z-index:20; background:var(--primary); border-bottom:1px solid rgba(255,255,255,.06); }
+  .nav .wrap { display:flex; align-items:center; justify-content:space-between; height:68px; gap:20px; }
+  .nav .brand img { height:28px; width:auto; }
+  .nav ul { display:flex; gap:26px; list-style:none; margin:0; padding:0; }
+  .nav ul a { color:var(--on-dark-2); text-decoration:none; font-size:15px; font-weight:500; transition:color .15s; }
+  .nav ul a:hover { color:#fff; }
+
+  /* Buttons */
+  .btn { display:inline-flex; align-items:center; gap:10px; padding:13px 22px; border-radius:10px; font-weight:600; font-size:15px; text-decoration:none; transition:background .15s, transform .15s, box-shadow .15s; white-space:nowrap; cursor:pointer; }
+  .btn svg { width:18px; height:18px; flex:none; }
+  .btn:active { transform:translateY(1px); }
+  .btn-primary { background:var(--gold); color:var(--on-gold); box-shadow:0 6px 18px rgba(201,162,39,.32); }
+  .btn-primary:hover { background:var(--gold-bright); }
+  .btn-dark { background:var(--primary); color:#fff; box-shadow:0 6px 18px rgba(17,19,24,.22); }
+  .btn-dark:hover { background:var(--primary-hover); }
+  .btn-light { background:#fff; color:var(--text); border:1px solid var(--border); }
+  .btn-light:hover { border-color:#CBD2DC; background:#FAFBFC; }
+  .btn-accent { background:var(--gold); color:var(--on-gold); padding:10px 18px; font-size:14px; }
+  .btn-accent:hover { background:var(--gold-bright); }
+
+  /* Hero */
+  .hero { text-align:center; padding:84px 0 0; background:
+      radial-gradient(900px 420px at 50% 0%, rgba(201,162,39,.16), transparent 70%), var(--bg); }
+  .badge { display:inline-flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--border); border-radius:999px; padding:6px 14px; font-size:14px; font-weight:500; color:var(--text); box-shadow:0 1px 2px rgba(16,24,40,.04); }
+  .badge .dot { width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 3px var(--gold-bg); }
+  .hero h1 { font-size:clamp(36px, 5.6vw, 62px); line-height:1.08; letter-spacing:-.025em; font-weight:800; margin:26px auto 20px; max-width:900px; color:var(--primary); }
+  .hero h1 span { color:var(--gold-text); }
+  .hero p.lead { font-size:clamp(17px, 2vw, 19px); color:var(--text-2); max-width:720px; margin:0 auto 34px; }
+  .cta { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .meta { margin-top:16px; font-size:13px; color:var(--text-3); }
+
+  /* Screenshot frame (screens are dark, so the frame is dark too) */
+  .shot { margin:60px auto 0; max-width:1120px; position:relative; }
+  .shot::before { content:""; position:absolute; inset:8% 6% -4%; background:radial-gradient(closest-side, rgba(17,19,24,.45), transparent); filter:blur(40px); z-index:0; }
+  .frame { position:relative; z-index:1; background:var(--surface); border:1px solid var(--surface-border); border-radius:18px; padding:10px; box-shadow:0 30px 80px -20px rgba(17,19,24,.5), 0 8px 24px rgba(17,19,24,.12); }
+  .frame .bar { display:flex; align-items:center; gap:7px; padding:4px 6px 10px; }
+  .frame .bar i { width:11px; height:11px; border-radius:50%; background:#3A3F4A; }
+  .frame .bar i:first-child { background:var(--gold); }
+  .frame .bar span { margin-left:10px; font-size:12px; color:var(--on-dark-2); }
+  .frame img { border-radius:10px; border:1px solid var(--surface-border); width:100%; height:auto; }
+
+  /* Stats strip */
+  .stats { background:var(--primary); color:#fff; margin-top:-120px; padding:180px 0 56px; }
+  .stats .grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:24px; text-align:center; }
+  .stats b { display:block; font-size:30px; font-weight:800; letter-spacing:-.02em; color:var(--gold-bright); }
+  .stats small { color:var(--on-dark-2); font-size:14px; }
+
+  /* Sections */
+  section { padding:96px 0; }
+  .eyebrow { color:var(--gold-text); font-weight:600; font-size:14px; text-transform:uppercase; letter-spacing:.08em; }
+  h2 { font-size:clamp(28px, 3.6vw, 40px); line-height:1.15; letter-spacing:-.02em; margin:10px 0 14px; color:var(--primary); }
+  .sub { color:var(--text-2); max-width:680px; margin:0; font-size:17px; }
+  .head { text-align:center; margin-bottom:52px; }
+  .head .sub { margin:0 auto; }
+
+  /* Benefits */
+  .benefits { display:grid; grid-template-columns:repeat(2, 1fr); gap:18px; }
+  .benefit { display:flex; gap:18px; background:var(--card); border:1px solid var(--border); border-left:4px solid var(--gold); border-radius:var(--radius); padding:26px 28px; }
+  .benefit .num { flex:none; font-size:28px; font-weight:800; color:var(--gold); line-height:1; width:36px; }
+  .benefit h3 { margin:0 0 6px; font-size:19px; color:var(--primary); }
+  .benefit p { margin:0; color:var(--text-2); font-size:15.5px; }
+  .benefit .before { display:block; margin-top:12px; font-size:13.5px; color:var(--text-3); }
+  .benefit .before b { color:var(--text-2); font-weight:600; }
+
+  .features { display:grid; grid-template-columns:repeat(4, 1fr); gap:18px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; transition:box-shadow .2s, transform .2s; }
+  .card:hover { box-shadow:0 12px 30px -12px rgba(17,19,24,.2); transform:translateY(-2px); }
+  .ico { width:44px; height:44px; border-radius:11px; display:grid; place-items:center; background:var(--gold-bg); color:var(--gold-text); margin-bottom:16px; }
+  .ico svg { width:22px; height:22px; }
+  .ico.g { background:var(--success-bg); color:var(--success); }
+  .ico.o { background:var(--warning-bg); color:var(--warning); }
+  .ico.b { background:var(--blue-bg); color:var(--blue); }
+  .ico.v { background:var(--violet-bg); color:var(--violet); }
+  .card h3 { margin:0 0 6px; font-size:17px; }
+  .card p { margin:0; color:var(--text-2); font-size:15px; }
+
+  /* Flow */
+  .flowbox { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:36px; margin-top:22px; }
+  .flowrow { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:14px 0; }
+  .flowrow .lbl { width:96px; font-weight:600; color:var(--text-2); font-size:14px; }
+  .step { background:var(--bg); border:1px solid var(--border); border-radius:9px; padding:7px 14px; font-size:14px; font-weight:500; }
+  .step.ai { background:var(--gold-bg); border-color:#EEDB9C; color:#6B5205; }
+  .step.last { background:var(--success-bg); border-color:#BBF7D0; color:#15803D; }
+  .arrow { color:var(--text-3); }
+  .flownote { margin:18px 0 0; font-size:13.5px; color:var(--text-3); }
+  .flownote span { display:inline-block; width:10px; height:10px; border-radius:3px; background:var(--gold-bg); border:1px solid #EEDB9C; margin-right:6px; vertical-align:-1px; }
+
+  /* Gallery */
+  .tour { background:#fff; border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+  .tabs { display:inline-flex; background:var(--bg); border:1px solid var(--border); border-radius:11px; padding:4px; gap:4px; margin-bottom:28px; flex-wrap:wrap; justify-content:center; }
+  .tabs button { font:inherit; font-size:14px; font-weight:500; border:0; background:transparent; color:var(--text-2); padding:8px 16px; border-radius:8px; cursor:pointer; }
+  .tabs button[aria-selected="true"] { background:var(--primary); color:#fff; box-shadow:0 1px 3px rgba(16,24,40,.12); }
+  .tour .frame { max-width:1040px; margin:0 auto; }
+  .tour .cap { text-align:center; color:var(--text-2); font-size:15px; margin:18px auto 0; max-width:680px; min-height:48px; }
+
+  /* Custom fit (dark) */
+  .fit { background:var(--primary); color:var(--on-dark); }
+  .fit h2 { color:#fff; }
+  .fit .sub { color:var(--on-dark-2); }
+  .fit .eyebrow { color:var(--gold-bright); }
+  .fit .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .fit .box { background:var(--surface); border:1px solid var(--surface-border); border-top:3px solid var(--gold); border-radius:var(--radius); padding:28px; }
+  .fit .box h3 { margin:0 0 8px; font-size:19px; color:#fff; }
+  .fit .box p { margin:0; color:var(--on-dark-2); font-size:15px; }
+
+  /* Info + steps */
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+  .panel { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:32px; }
+  .panel h3 { margin:0 0 16px; font-size:20px; color:var(--primary); }
+  .checks { list-style:none; margin:0; padding:0; display:grid; gap:12px; }
+  .checks li { display:flex; gap:12px; color:var(--text); font-size:15px; }
+  .checks svg { flex:none; width:20px; height:20px; color:var(--success); margin-top:2px; }
+  .steps { counter-reset:s; list-style:none; margin:0; padding:0; display:grid; gap:16px; }
+  .steps li { counter-increment:s; display:flex; gap:14px; font-size:15px; }
+  .steps li::before { content:counter(s); flex:none; width:30px; height:30px; border-radius:50%; background:var(--primary); color:var(--gold-bright); font-weight:700; font-size:14px; display:grid; place-items:center; }
+  .steps b { display:block; }
+  .steps span { color:var(--text-2); }
+  .tip { margin-top:20px; background:var(--warning-bg); border-radius:10px; padding:12px 16px; font-size:14px; color:#92400E; }
+
+  /* Manual */
+  .manual { display:flex; align-items:center; justify-content:space-between; gap:28px; background:linear-gradient(135deg, var(--primary), var(--surface-2)); color:#fff; border-radius:20px; padding:44px; overflow:hidden; position:relative; }
+  .manual::after { content:""; position:absolute; right:-50px; bottom:-70px; width:300px; height:300px; background:url(assets/logo-emblem-gold.svg) center/contain no-repeat; opacity:.14; }
+  .manual h2 { color:#fff; margin-top:6px; }
+  .manual p { color:var(--on-dark-2); margin:0; max-width:560px; }
+  .manual .eyebrow { color:var(--gold-bright); }
+  .manual .actions { display:flex; gap:12px; flex-wrap:wrap; position:relative; z-index:1; }
+  .btn-ghost { color:#fff; border:1px solid rgba(255,255,255,.28); }
+  .btn-ghost:hover { background:rgba(255,255,255,.08); }
+
+  /* FAQ */
+  .faq { max-width:820px; margin:0 auto; display:grid; gap:12px; }
+  details { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; }
+  summary { cursor:pointer; font-weight:600; list-style:none; display:flex; justify-content:space-between; gap:16px; }
+  summary::-webkit-details-marker { display:none; }
+  summary::after { content:"+"; color:var(--gold-text); font-size:22px; line-height:1; }
+  details[open] summary::after { content:"–"; }
+  details p { color:var(--text-2); margin:12px 0 0; font-size:15px; }
+
+  /* Final CTA + footer */
+  .final { text-align:center; padding-top:64px; }
+  footer { background:var(--primary); color:var(--on-dark-2); padding:40px 0; font-size:14px; }
+  footer .wrap { display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+  footer img { height:22px; width:auto; }
+  footer nav { display:flex; gap:22px; flex-wrap:wrap; }
+  footer a { color:var(--on-dark-2); text-decoration:none; }
+  footer a:hover { color:#fff; }
+
+  /* Order / contact */
+  .order { display:grid; grid-template-columns:1.1fr 1fr; gap:22px; align-items:stretch; }
+  .order .panel p { color:var(--text-2); margin:0 0 18px; }
+  .order ul { margin:0; padding-left:20px; color:var(--text); font-size:15px; display:grid; gap:6px; }
+  .order ul li::marker { color:var(--gold); }
+  .contacts { display:grid; gap:14px; }
+  .contact { display:flex; align-items:center; gap:16px; background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:22px 24px; text-decoration:none; transition:box-shadow .2s, border-color .2s; }
+  .contact:hover { border-color:#E2CC80; box-shadow:0 12px 30px -12px rgba(17,19,24,.2); }
+  .contact .ico { margin:0; flex:none; }
+  .contact small { display:block; color:var(--text-2); font-size:13px; }
+  .contact b { font-size:18px; color:var(--primary); word-break:break-all; }
+
+  .reveal { opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
+  .reveal.in { opacity:1; transform:none; }
+  @media (prefers-reduced-motion:reduce) { .reveal { opacity:1; transform:none; transition:none; } html { scroll-behavior:auto; } }
+
+  @media (max-width:980px) {
+    .features { grid-template-columns:repeat(2, 1fr); }
+    .benefits, .two, .fit .grid2 { grid-template-columns:1fr; }
+    .manual { flex-direction:column; align-items:flex-start; }
+    .order { grid-template-columns:1fr; }
+    .nav ul { gap:18px; }
+  }
+  @media (max-width:860px) {
+    .nav ul { display:none; }
+  }
+  @media (max-width:760px) {
+    .nav .btn-accent span { display:none; }
+    .hero { padding-top:56px; }
+    .stats .grid { grid-template-columns:repeat(2, 1fr); }
+    .stats b { font-size:22px; }
+    section { padding:68px 0; }
+    .flowrow .lbl { width:100%; }
+    .manual, .panel, .flowbox, .benefit { padding:24px; }
+  }
+  @media (max-width:520px) {
+    .features { grid-template-columns:1fr; }
+    .cta .btn { width:100%; justify-content:center; }
+    .frame { padding:6px; border-radius:12px; }
+    .frame .bar { display:none; }
+    .benefit { flex-direction:column; gap:10px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#" aria-label="Kontrakta Desktop početna"><img src="assets/logo-full-gold.svg" alt="Kontrakta" width="767" height="106"></a>
+    <ul>
+      <li><a href="#pomoc">Kako pomaže</a></li>
+      <li><a href="#mogucnosti">Mogućnosti</a></li>
+      <li><a href="#pregled">Pregled</a></li>
+      <li><a href="#uputstvo">Uputstvo</a></li>
+      <li><a href="#pitanja">Pitanja</a></li>
+      <li><a href="#kontakt">Kontakt</a></li>
+    </ul>
+    <a class="btn btn-accent" href="#kontakt">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      <span>Zakažite prezentaciju</span>
+    </a>
+  </div>
+</header>
+
+<main>
+<div class="hero">
+  <div class="wrap">
+    <span class="badge"><span class="dot"></span>Za advokate i advokatske kancelarije u BiH · Windows</span>
+    <h1>Pravni akti za nekoliko minuta, <span>kancelarija pod kontrolom</span></h1>
+    <p class="lead">Kontrakta Desktop piše nacrt tužbe, žalbe, ugovora ili podneska iz vašeg opisa slučaja, uz članove zakona iz vaše baze propisa. U istom programu vodite predmete, ročišta, rokove, troškovnike i fakture.</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="#kontakt">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Zakažite besplatnu prezentaciju
+      </a>
+      <a class="btn btn-light" href="Korisnicko-uputstvo-Kontrakta.pdf" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2Zm0 0A2 2 0 0 0 6 22h12"/><path d="M8 7h6M8 11h6"/></svg>
+        Korisničko uputstvo
+      </a>
+    </div>
+    <div class="meta">Windows 10 / 11 (64-bit) · jednokratna kupovina, bez pretplate · podaci ostaju na vašem računaru</div>
+
+    <div class="shot reveal">
+      <div class="frame">
+        <div class="bar"><i></i><i></i><i></i><span>Kontrakta Desktop – Početna</span></div>
+        <img src="assets/pocetna.png" alt="Kontrakta početna: predstojeća ročišta, nedavni akti, rokovi sa bojom hitnosti, zadaci za danas i finansije po mjesecima" width="1600" height="859">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="wrap grid">
+    <div><b>16</b><small>vrsta akata i ugovora</small></div>
+    <div><b>RS · FBiH · BD</b><small>tri zakonodavstva i njihovi sudovi</small></div>
+    <div><b>Latinica · ćirilica</b><small>akt u pismu koje izaberete</small></div>
+    <div><b>100% lokalno</b><small>šifrovana baza na vašem računaru</small></div>
+  </div>
+</div>
+
+<section id="pomoc">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="eyebrow">Kako vam pomaže</div>
+      <h2>Manje papirologije, više vremena za klijente</h2>
+      <p class="sub">Kontrakta preuzima posao koji advokatu oduzima najviše vremena: prepisivanje podataka, traženje članova zakona, računanje rokova i sastavljanje računa.</p>
+    </div>
+    <div class="benefits">
+      <div class="benefit reveal">
+        <div class="num">01</div>
+        <div>
+          <h3>Nacrt akta za nekoliko minuta</h3>
+          <p>Opišite slučaj svojim riječima ili ubacite PDF tužbe, presude ili rješenja. AI popunjava formu, a zatim piše akt sa pravnim osnovom iz članova vaše baze zakona.</p>
+          <span class="before"><b>Umjesto:</b> praznog Word dokumenta, kopiranja starih podnesaka i ručnog traženja članova.</span>
+        </div>
+      </div>
+      <div class="benefit reveal">
+        <div class="num">02</div>
+        <div>
+          <h3>Nijedan rok ne promakne</h3>
+          <p>Kalkulator računa posljednji dan roka uz neradne dane i praznike, postavlja interni rok nekoliko dana ranije i šalje podsjetnike 7, 3 i 1 dan prije isteka.</p>
+          <span class="before"><b>Umjesto:</b> rokovnika, ceduljica i brojanja dana u kalendaru.</span>
+        </div>
+      </div>
+      <div class="benefit reveal">
+        <div class="num">03</div>
+        <div>
+          <h3>Naplatite svaki sat rada</h3>
+          <p>Tajmer bilježi vrijeme po predmetu, troškovnik računa nagradu po advokatskoj tarifi, a stavke jednim klikom prelaze na fakturu sa QR kodom za plaćanje.</p>
+          <span class="before"><b>Umjesto:</b> procjene na kraju mjeseca i računa u Excelu.</span>
+        </div>
+      </div>
+      <div class="benefit reveal">
+        <div class="num">04</div>
+        <div>
+          <h3>Cijeli predmet na jednom mjestu</h3>
+          <p>Stranke, dokumenti, akti, ročišta, rokovi, bilješke i novac. Provjera sukoba interesa upozorava prije nego što dodate stranku koja se već pojavila u drugom predmetu.</p>
+          <span class="before"><b>Umjesto:</b> fascikli, foldera na disku i pretrage mailova.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="mogucnosti" style="padding-top:0">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="eyebrow">Mogućnosti</div>
+      <h2>Sve što advokatskoj kancelariji treba</h2>
+      <p class="sub">Izrada akata i vođenje kancelarije u jednom programu, pa se podaci o predmetu, strankama i sudu unose samo jednom.</p>
+    </div>
+    <div class="features">
+      <div class="card reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M12 18v-6M9 15h6"/></svg></div><h3>Izrada akata uz AI</h3><p>Tužba, odgovor na tužbu, žalba, prigovor, punomoć, podnesak i 9 vrsta ugovora, uz izbor ChatGPT-a ili Claude-a.</p></div>
+      <div class="card reveal"><div class="ico v"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4z"/><path d="M19 15v4M17 17h4M5 17v2M4 18h2"/></svg></div><h3>Popuni iz dokumenta</h3><p>AI pročita PDF tužbe, presude ili rješenja i popuni formu i ključne navode. Prije izmjene pokazuje šta mijenja.</p></div>
+      <div class="card reveal"><div class="ico b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v18H6a2 2 0 0 1-2-1.5Z"/><circle cx="12" cy="10" r="3"/><path d="m14.2 12.2 2.3 2.3"/></svg></div><h3>Baza zakona</h3><p>Pretraga propisa po značenju ili po tačnom članu i kopiranje citata. Prije generisanja provjerava da citirani član postoji.</p></div>
+      <div class="card reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div><h3>Uređivač akta</h3><p>Uređivanje kao u Wordu, verzije izmjena i izvoz u DOCX i PDF sa memorandumom kancelarije.</p></div>
+      <div class="card reveal"><div class="ico o"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v3l2 1"/></svg></div><h3>Kalendar i rokovi</h3><p>Ročišta, sastanci, rokovi i zadaci u jednom kalendaru, uz Windows podsjetnike i iCal izvoz.</p></div>
+      <div class="card reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M10 2h4"/></svg></div><h3>Vrijeme i troškovnik</h3><p>Tajmer i ručni unos vremena, troškovnik po advokatskoj tarifi i zahtjev za naknadu troškova postupka.</p></div>
+      <div class="card reveal"><div class="ico g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></div><h3>Fakture i finansije</h3><p>Računi, predračuni, avansi i storna, uplate, opomene, potraživanja po starosti i izvoz za knjigovođu.</p></div>
+      <div class="card reveal"><div class="ico b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div><h3>Sigurnost</h3><p>Šifrovana baza, automatsko zaključavanje i šifrovani backup koji se vraća i na drugom računaru.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="tok" style="padding-top:0">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="eyebrow">Kako radi</div>
+      <h2>Od prijema presude do naplate</h2>
+      <p class="sub">Podaci iz predmeta sami prelaze u akt, vrijeme i troškovi u fakturu, a uplata u finansije. Ništa ne prepisujete dva puta.</p>
+    </div>
+    <div class="flowbox reveal">
+      <div class="flowrow"><span class="lbl">Akt</span><span class="step">Opis slučaja ili PDF</span><span class="arrow">→</span><span class="step ai">AI popunjava formu</span><span class="arrow">→</span><span class="step ai">Akt uz članove zakona</span><span class="arrow">→</span><span class="step">Vaša provjera</span><span class="arrow">→</span><span class="step last">DOCX / PDF</span></div>
+      <div class="flowrow"><span class="lbl">Predmet</span><span class="step">Prijem presude</span><span class="arrow">→</span><span class="step">Rok za žalbu izračunat</span><span class="arrow">→</span><span class="step">Podsjetnik</span><span class="arrow">→</span><span class="step ai">Žalba</span><span class="arrow">→</span><span class="step">Troškovnik</span><span class="arrow">→</span><span class="step">Faktura</span><span class="arrow">→</span><span class="step last">Uplata</span></div>
+      <p class="flownote"><span></span>Koraci koje radi AI. Sve ostalo aplikacija radi lokalno, i bez interneta.</p>
+    </div>
+  </div>
+</section>
+
+<section id="pregled" class="tour">
+  <div class="wrap" style="text-align:center">
+    <div class="head reveal" style="margin-bottom:28px">
+      <div class="eyebrow">Pregled</div>
+      <h2>Pogledajte program iznutra</h2>
+    </div>
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-src="assets/pocetna.png" data-cap="Početna: predstojeća ročišta, nedavni akti, rokovi u boji hitnosti, zadaci za danas i finansije po mjesecima.">Početna</button>
+      <button role="tab" aria-selected="false" data-src="assets/novi-akt.png" data-cap="Novi akt: opišite slučaj, a AI vodič popunjava prazna polja i pita za ono što fali. Desno vidite popunjenost i korake.">Novi akt</button>
+      <button role="tab" aria-selected="false" data-src="assets/akt.png" data-cap="Gotov akt: uređivač kao u Wordu, veza sa predmetom, troškovnik u aktu i izvoz u DOCX ili PDF.">Gotov akt</button>
+      <button role="tab" aria-selected="false" data-src="assets/pretraga-propisa.png" data-cap="Pretraga propisa: po značenju ili po tačnom članu, sa putanjom člana u zakonu i kopiranjem citata.">Propisi</button>
+      <button role="tab" aria-selected="false" data-src="assets/predmeti.png" data-cap="Predmeti: interni broj, stranke, sud i broj kod suda, vrsta postupka, sljedeći rok ili ročište i status.">Predmeti</button>
+      <button role="tab" aria-selected="false" data-src="assets/rokovi.png" data-cap="Rokovi: kalkulator objašnjava izračun korak po korak i pomjera rok koji ističe u nedjelju ili na praznik.">Rokovi</button>
+      <button role="tab" aria-selected="false" data-src="assets/kalendar.png" data-cap="Kalendar: ročišta, sastanci, uviđaji, rokovi i zadaci u mjesečnom, sedmičnom, dnevnom i agenda prikazu.">Kalendar</button>
+      <button role="tab" aria-selected="false" data-src="assets/troskovnik.png" data-cap="Troškovnik: bodovi i nagrada po tarifnom stavu i vrijednosti spora, PDV, takse i zahtjev za troškove.">Troškovnik</button>
+      <button role="tab" aria-selected="false" data-src="assets/fakture.png" data-cap="Fakture: računi, avansi i storna, uplate, opomene i slanje e-mailom, uz izdato, plaćeno i otvoreno.">Fakture</button>
+    </div>
+    <div class="frame reveal">
+      <div class="bar"><i></i><i></i><i></i><span id="tour-title">Kontrakta Desktop – Početna</span></div>
+      <img id="tour-img" src="assets/pocetna.png" alt="Ekran programa Kontrakta Desktop" width="1600" height="860" loading="lazy">
+    </div>
+    <p class="cap" id="tour-cap">Početna: predstojeća ročišta, nedavni akti, rokovi u boji hitnosti, zadaci za danas i finansije po mjesecima.</p>
+  </div>
+</section>
+
+<section class="fit">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="eyebrow">Prilagođeno vama</div>
+      <h2>Vaša kancelarija, vaš način rada</h2>
+      <p class="sub">Svaka kancelarija radi drugačije, zato se Kontrakta prilagođava vama, a ne obrnuto.</p>
+    </div>
+    <div class="grid2">
+      <div class="box reveal">
+        <h3>Vaš memorandum</h3>
+        <p>Učitajte vlastiti Word memorandum sa zaglavljem, podnožjem i logom: izvezeni akt izgleda tačno kao dokument vaše kancelarije. Logo, adresa i žiro računi idu i na fakture i troškovnike.</p>
+      </div>
+      <div class="box reveal">
+        <h3>Vaša pravila</h3>
+        <p>Numeracija predmeta i faktura, satnica po klijentu ili predmetu, tarife, liste aktivnosti, podsjetnici, praznici i pravila računanja rokova po zakonodavstvu. Svijetla ili tamna tema.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap two">
+    <div class="panel reveal">
+      <h3>Podaci vaših klijenata ostaju kod vas</h3>
+      <ul class="checks">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Predmeti, klijenti, dokumenti i fakture čuvaju se samo na vašem računaru, u šifrovanoj bazi. Nema servera na kojem su vaši spisi.</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Na internet ide samo upit AI provajderu kad izrađujete akt i upit za pretragu zakona.</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Bez interneta rade predmeti, kalendar, rokovi, vrijeme, troškovnici, fakture i finansije.</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Automatsko zaključavanje kad niste za računarom i ključ za oporavak ako zaboravite lozinku.</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Šifrovani backup, dnevno ili sedmično, koji se vraća i na drugom računaru.</li>
+      </ul>
+    </div>
+    <div class="panel reveal">
+      <h3>Šta vam treba</h3>
+      <ol class="steps">
+        <li><div><b>Računar sa Windowsom 10 ili 11</b><span>64-bit. Program se instalira na računar kancelarije.</span></div></li>
+        <li><div><b>AI ključ (OpenAI i/ili Claude)</b><span>Ključ je vaš: potrošnju plaćate direktno provajderu, prema upotrebi. Program pokazuje potrošnju po mjesecima.</span></div></li>
+        <li><div><b>Baza zakona</b><span>Vlastiti besplatni Supabase projekat. Uz program dolazi 12 početnih zakona za RS, FBiH i BD, a njihov uvoz košta ispod 1 USD, jednokratno.</span></div></li>
+      </ol>
+      <div class="tip"><strong>Važno:</strong> akt koji napravi AI je nacrt. Desni panel pokazuje kako je akt sastavljen i koje je članove citirao, a advokat prije predaje sudu provjerava činjenice, članove i rokove.</div>
+    </div>
+  </div>
+</section>
+
+<section id="uputstvo" style="padding-top:0">
+  <div class="wrap">
+    <div class="manual reveal">
+      <div>
+        <div class="eyebrow">Korisničko uputstvo</div>
+        <h2>Od prve prijave do naplaćene fakture</h2>
+        <p>Uputstvo u 24 poglavlja, sa slikama ekrana: izrada akata, baza zakona, predmeti i stranke, kalendar i rokovi, vrijeme, troškovnici, fakture, finansije, backup i prečice na tastaturi.</p>
+      </div>
+      <div class="actions">
+        <a class="btn btn-primary" href="Korisnicko-uputstvo-Kontrakta.pdf" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg>
+          Preuzmi PDF (17 MB)
+        </a>
+        <a class="btn btn-ghost" href="Korisnicko-uputstvo-Kontrakta.pdf" target="_blank" rel="noopener">Otvori u pregledniku</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pitanja" style="padding-top:0">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="eyebrow">Pitanja</div>
+      <h2>Česta pitanja</h2>
+    </div>
+    <div class="faq">
+      <details class="reveal"><summary>Da li je akt koji napravi AI spreman za predaju sudu?</summary><p>Akt je nacrt koji pregledate i doradite. Prije generisanja program provjerava da svaki upisani član postoji u zakonu, a uz gotov akt vidite obrazloženje kako je sastavljen i tekst svakog citiranog člana. Odgovornost za sadržaj ostaje na advokatu.</p></details>
+      <details class="reveal"><summary>Gdje se čuvaju podaci mojih klijenata?</summary><p>Samo na vašem računaru, u šifrovanoj bazi. Kontrakta nema server na kojem bi se čuvali vaši predmeti, dokumenti ili fakture. Prema AI provajderu odlazi samo ono što unesete u formu kad izrađujete akt.</p></details>
+      <details class="reveal"><summary>Koliko košta korištenje AI-ja?</summary><p>Koristite vlastiti OpenAI ili Claude ključ i plaćate direktno provajderu, samo ono što potrošite. U Podešavanjima vidite broj poziva i procjenu troška po mjesecu za posljednjih 12 mjeseci.</p></details>
+      <details class="reveal"><summary>Da li postoji mjesečna pretplata?</summary><p>Ne. Program se kupuje jednom, bez pretplate i bez licencnog ključa. Nove verzije dobijate kao folder (e-mailom, preko Google Drive-a ili na USB-u), a program prije ažuriranja sam napravi backup.</p></details>
+      <details class="reveal"><summary>Koja zakonodavstva i pisma podržava?</summary><p>Republiku Srpsku, Federaciju BiH i Brčko distrikt, sa sudovima po zakonodavstvu. Akt dobijate latinicom ili ćirilicom, a zakon možete uvesti i iz ćiriličnog teksta.</p></details>
+      <details class="reveal"><summary>Radi li program bez interneta?</summary><p>Da. Bez interneta rade predmeti, klijenti, dokumenti, kalendar, rokovi, zadaci, evidencija vremena, troškovnici, fakture i finansije. Internet treba samo za izradu akata, čitanje dokumenata i pretragu propisa.</p></details>
+      <details class="reveal"><summary>Mogu li koristiti svoj memorandum?</summary><p>Možete. Učitajte Word dokument sa vašim zaglavljem, podnožjem i marginama, i svaki izvezeni akt izlazi na vašem memorandumu. Bez njega se memorandum pravi iz podataka kancelarije i loga.</p></details>
+      <details class="reveal"><summary>Koji su sistemski zahtjevi?</summary><p>Windows 10 ili Windows 11, 64-bit. Za izradu akata trebaju AI ključ i baza zakona, opisani u poglavlju 1 korisničkog uputstva.</p></details>
+    </div>
+  </div>
+</section>
+
+<section id="kontakt" style="padding-top:0">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="eyebrow">Kontakt</div>
+      <h2>Pogledajte Kontraktu na primjeru vaše kancelarije</h2>
+      <p class="sub">Pozovite ili pošaljite mail. Rado ću vam pokazati kako program radi i kako se prilagođava vašoj kancelariji i vašem načinu rada.</p>
+    </div>
+    <div class="order">
+      <div class="panel reveal">
+        <h3>Šta dobijate</h3>
+        <p>Jedan program za izradu akata i vođenje cijele kancelarije, kupljen jednom.</p>
+        <ul>
+          <li>Izrada 16 vrsta akata i ugovora uz vašu bazu zakona</li>
+          <li>Predmeti, klijenti, dokumenti, kalendar, rokovi i zadaci</li>
+          <li>Evidencija vremena, troškovnici po tarifi, fakture i finansije</li>
+          <li>Vaš memorandum, logo i žiro računi na aktima i fakturama</li>
+          <li>Nove verzije bez pretplate</li>
+        </ul>
+      </div>
+      <div class="contacts">
+        <a class="contact reveal" href="tel:+38765979046">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span>
+          <span><small>Pozovite</small><b>+387 65 979 046</b></span>
+        </a>
+        <a class="contact reveal" href="mailto:idesigne.bubble@gmail.com?subject=Kontrakta%20Desktop%20%E2%80%93%20prezentacija">
+          <span class="ico g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span>
+          <span><small>Pišite</small><b>idesigne.bubble@gmail.com</b></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="final reveal">
+      <h2>Manje vremena za papire, više za klijente</h2>
+      <p class="sub" style="margin:0 auto 28px">Prezentacija je besplatna i bez obaveze. Pokazaću vam izradu akta, rokove i fakturisanje na primjeru iz vaše prakse.</p>
+      <div class="cta">
+        <a class="btn btn-dark" href="mailto:idesigne.bubble@gmail.com?subject=Kontrakta%20Desktop%20%E2%80%93%20prezentacija">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Zakažite prezentaciju
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <img src="assets/logo-full.svg" alt="Kontrakta" width="767" height="106">
+    <nav>
+      <a href="#pomoc">Kako pomaže</a>
+      <a href="Korisnicko-uputstvo-Kontrakta.pdf" target="_blank" rel="noopener">Korisničko uputstvo</a>
+      <a href="tel:+38765979046">+387 65 979 046</a>
+      <a href="mailto:idesigne.bubble@gmail.com">idesigne.bubble@gmail.com</a>
+    </nav>
+    <span>© 2026 Kontrakta Desktop</span>
+  </div>
+</footer>
+
+<script>
+  // Tour tabs
+  const tabs = document.querySelectorAll('.tabs button');
+  const img = document.getElementById('tour-img'), cap = document.getElementById('tour-cap'), title = document.getElementById('tour-title');
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => x.setAttribute('aria-selected', x === t));
+    img.src = t.dataset.src; cap.textContent = t.dataset.cap; title.textContent = 'Kontrakta Desktop – ' + t.textContent;
+  }));
+  // Preload tour screenshots after load
+  window.addEventListener('load', () => tabs.forEach(t => { const i = new Image(); i.src = t.dataset.src; }));
+
+  // Reveal on scroll
+  const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), { threshold: .12 }) : null;
+  document.querySelectorAll('.reveal').forEach(el => io ? io.observe(el) : el.classList.add('in'));
+</script>
+</body>
+</html>
