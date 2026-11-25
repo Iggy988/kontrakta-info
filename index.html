@@ -130,6 +130,17 @@
   .tour .cap { text-align:center; color:var(--text-2); font-size:15px; margin:18px auto 0; max-width:680px; min-height:48px; }
 
   /* Custom fit (dark) */
+  .video { padding-bottom:0; }
+  .video .frame { max-width:1040px; margin:0 auto; }
+  .yt { position:relative; display:block; width:100%; aspect-ratio:16/9; border:0; padding:0; border-radius:10px; overflow:hidden; background:#000; cursor:pointer; }
+  .yt img { width:100%; height:100%; object-fit:cover; border:0; border-radius:0; transition:transform .4s, opacity .2s; }
+  .yt:hover img { transform:scale(1.02); opacity:.9; }
+  .yt .play { position:absolute; inset:0; margin:auto; width:84px; height:84px; border-radius:50%; background:var(--gold); color:var(--on-gold); display:grid; place-items:center; box-shadow:0 10px 30px rgba(0,0,0,.4); transition:transform .2s, background .2s; }
+  .yt:hover .play { transform:scale(1.08); background:var(--gold-bright); }
+  .yt .play svg { width:34px; height:34px; margin-left:5px; }
+  .yt:focus-visible { outline:3px solid var(--gold); outline-offset:3px; }
+  .yt iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+  @media (max-width:520px) { .yt .play { width:64px; height:64px; } .yt .play svg { width:26px; height:26px; } }
   .fit { background:var(--primary); color:var(--on-dark); }
   .fit h2 { color:#fff; }
   .fit .sub { color:var(--on-dark-2); }
@@ -231,6 +242,7 @@
   <div class="wrap">
     <a class="brand" href="#" aria-label="Kontrakta Desktop početna"><img src="assets/logo-full-gold.svg" alt="Kontrakta" width="767" height="106"></a>
     <ul>
+      <li><a href="#video">Video</a></li>
       <li><a href="#pomoc">Kako pomaže</a></li>
       <li><a href="#mogucnosti">Mogućnosti</a></li>
       <li><a href="#pregled">Pregled</a></li>
@@ -280,6 +292,23 @@
     <div><b>100% lokalno</b><small>šifrovana baza na vašem računaru</small></div>
   </div>
 </div>
+
+<section id="video" class="video">
+  <div class="wrap">
+    <div class="head reveal" style="margin-bottom:32px">
+      <div class="eyebrow">Video</div>
+      <h2>Pogledajte Kontraktu u akciji</h2>
+      <p class="sub">Kratak pregled: od opisa slučaja do gotovog akta, uz predmete, rokove i fakture.</p>
+    </div>
+    <div class="frame reveal">
+      <div class="bar"><i></i><i></i><i></i><span>Kontrakta Desktop – video prezentacija</span></div>
+      <div class="yt" id="yt" role="button" tabindex="0" aria-label="Pusti video prezentaciju programa Kontrakta Desktop" data-id="Uiqq7q-oQuU">
+        <img src="https://i.ytimg.com/vi/Uiqq7q-oQuU/maxresdefault.jpg" alt="" loading="lazy" width="1280" height="720">
+        <span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5Z"/></svg></span>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section id="pomoc">
   <div class="wrap">
@@ -541,6 +570,23 @@
     if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
   }), { threshold: .12 }) : null;
   document.querySelectorAll('.reveal').forEach(el => io ? io.observe(el) : el.classList.add('in'));
+</script>
+<script>
+(function () {
+  var yt = document.getElementById('yt');
+  if (!yt) return;
+  function play() {
+    var f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + yt.dataset.id + '?autoplay=1&rel=0&modestbranding=1';
+    f.title = 'Kontrakta Desktop – video prezentacija';
+    f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    f.allowFullscreen = true;
+    yt.innerHTML = ''; yt.appendChild(f); yt.removeAttribute('role'); yt.removeAttribute('tabindex'); yt.style.cursor = 'default';
+    yt.onclick = yt.onkeydown = null;
+  }
+  yt.onclick = play;
+  yt.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(); } };
+})();
 </script>
 </body>
 </html>
